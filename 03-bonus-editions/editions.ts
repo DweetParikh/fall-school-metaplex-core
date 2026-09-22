@@ -5,8 +5,6 @@ import { getUmi, explorerAddress } from "../shared/umi";
 const URI = "https://gist.githubusercontent.com/DweetParikh/148123c22b2e68a0058fde4f09721ceb/raw/c78836c70280881c5ea825f8c8028df446578aa4/gistfile1.txt";
 const ROYALTIES = [250, 500, 1000]; // 2.5% / 5% / 10%
 
-// Devnet's public RPC can lag a few seconds after confirmation before a
-// freshly-created account is readable. Retry instead of failing outright.
 async function fetchCollectionWithRetry(
   umi: Parameters<typeof fetchCollection>[0],
   address: Parameters<typeof fetchCollection>[1],
@@ -28,7 +26,6 @@ async function fetchCollectionWithRetry(
 async function main() {
   const umi = getUmi();
 
-  // 1. Collection = the "original painting"
   const collectionSigner = generateSigner(umi);
   await createCollection(umi, {
     collection: collectionSigner,
@@ -45,7 +42,6 @@ async function main() {
 
   const collection = await fetchCollectionWithRetry(umi, collectionSigner.publicKey);
 
-  // 2. Three prints, each with its OWN royalty (overrides the collection's)
   for (let i = 1; i <= 3; i++) {
     const asset = generateSigner(umi);
     await create(umi, {
